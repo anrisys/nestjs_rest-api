@@ -6,7 +6,7 @@ import { RegisterUserRequest, UserResponse } from 'src/model/user.model';
 @Controller('/api/users')
 export class UserController {
   constructor(private userService: UserService) {}
-
+  // TODO:: Delete route controller
   async register(
     @Body() request: RegisterUserRequest,
   ): Promise<WebResponse<UserResponse>> {

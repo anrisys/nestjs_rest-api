@@ -1,48 +1,34 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { User } from './user.domain';
-// import { ValidationService } from 'src/common/validation.service';
-// import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-// import { Logger } from 'winston';
+import { UserRegistrationRequest } from 'src/model/user.model';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
-  constructor(
-    // private validationService: ValidationService,
-    // @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
-    // @InjectModel(User) private userModel: typeof User,
-    @InjectModel(User) private userModel: typeof User,
-  ) {}
+  constructor(@InjectModel(User) private userModel: typeof User) {}
 
-  // async register(request: RegisterUserRequest): Promise<UserResponse> {
-  //   this.logger.info(`Register new user ${JSON.stringify(request)}`);
-  //   const registerRequest: RegisterUserRequest =
-  //     this.validationService.validate(UserValidation.REGISTER, request);
+  async saveUser(data: UserRegistrationRequest): Promise<void> {
+    data.password = await this.hashPassword(data.password);
+    await this.userModel.create({ data });
+  }
 
-  //   const existedUser = this.userModel.findOne({
-  //     where: {
-  //       email: registerRequest.email,
-  //     },
-  //   });
-
-  //   if (!existedUser) {
-  //     throw new HttpException('Email is already registerd', 400);
-  //   }
-
-  //   registerRequest.password = await bcrypt.hash(registerRequest.password, 10);
-
-  //   await this.userModel.create({ ...registerRequest });
-
-  //   return {
-  //     message: 'User successfully registered',
-  //   };
-  // }
-
-  async findOne(email: string): Promise<User | null> {
+  async findUser(identifier: string, value: string): Promise<User | null> {
     return this.userModel.findOne({
       where: {
-        email,
+        identifier: value,
       },
     });
+  }
+
+  async hashPassword(password: string): Promise<string> {
+    return await bcrypt.hash(password, 10);
+  }
+
+  async comparePassword(
+    password: string,
+    hashedPassword: string,
+  ): Promise<boolean> {
+    return await bcrypt.compare(password, hashedPassword);
   }
 }
