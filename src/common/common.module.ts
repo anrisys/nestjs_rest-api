@@ -3,10 +3,12 @@ import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { WinstonModule } from 'nest-winston';
 import { Dialect } from 'sequelize';
-import { Post } from 'src/post/post.domain';
-import { User } from 'src/user/user.domain';
+import { Post } from '../post/post.domain';
+import { User } from '../user/user.domain';
 import * as winston from 'winston';
 import { ValidationService } from './validation.service';
+import { APP_FILTER } from '@nestjs/core';
+import { ErrorFilter } from './error.filter';
 
 @Global()
 @Module({
@@ -30,7 +32,13 @@ import { ValidationService } from './validation.service';
       synchronize: true,
     }),
   ],
-  providers: [ValidationService],
+  providers: [
+    ValidationService,
+    {
+      provide: APP_FILTER,
+      useClass: ErrorFilter,
+    },
+  ],
   exports: [ValidationService],
 })
 export class CommonModule {}

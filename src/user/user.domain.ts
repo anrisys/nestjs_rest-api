@@ -1,5 +1,5 @@
 import { Column, HasMany, Model, Table } from 'sequelize-typescript';
-import { Post } from 'src/post/post.domain';
+import { Post } from '../post/post.domain';
 
 @Table
 export class User extends Model {

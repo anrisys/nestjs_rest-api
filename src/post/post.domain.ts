@@ -7,7 +7,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript';
-import { User } from 'src/user/user.domain';
+import { User } from '../user/user.domain';
 
 @Table
 export class Post extends Model {

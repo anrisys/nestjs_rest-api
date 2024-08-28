@@ -1,13 +1,13 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { ValidationService } from 'src/common/validation.service';
+import { ValidationService } from '../common/validation.service';
 import {
   UserLoginRequest,
   UserRegistrationRequest,
 } from 'src/model/user.model';
-import { UserService } from 'src/user/user.service';
-import { UserValidation } from 'src/user/user.validation';
+import { UserService } from '../user/user.service';
+import { UserValidation } from '../user/user.validation';
 import { Logger } from 'winston';
 
 @Injectable()
