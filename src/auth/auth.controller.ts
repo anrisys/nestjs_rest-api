@@ -2,8 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
-  HttpStatus,
   Post,
   Request,
   UseGuards,
@@ -17,7 +15,7 @@ import { UserRegistrationRequest } from '../model/user.model';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  @HttpCode(HttpStatus.OK)
+  // @HttpCode(HttpStatus.OK)
   // @Post('login')
   // signIn(@Body() signInDto: Record<string, any>) {
   //   // Change record into login request type (can be model)

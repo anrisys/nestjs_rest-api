@@ -53,8 +53,8 @@ export class AuthService {
       registerRequest.email,
     );
 
-    if (!existingUserWithSameEmail) {
-      throw new HttpException('Email already exists', 400);
+    if (existingUserWithSameEmail) {
+      throw new HttpException('Email is already existed', 400);
     }
 
     registerRequest.password = await this.userService.hashPassword(

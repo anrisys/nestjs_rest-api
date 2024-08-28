@@ -10,15 +10,23 @@ export class UserService {
 
   async saveUser(data: UserRegistrationRequest): Promise<void> {
     data.password = await this.hashPassword(data.password);
-    await this.userModel.create({ data });
+    await this.userModel.create({ ...data });
   }
 
   async findUser(identifier: string, value: string): Promise<User | null> {
-    return this.userModel.findOne({
-      where: {
-        identifier: value,
-      },
-    });
+    if (identifier === 'email') {
+      return this.userModel.findOne({
+        where: {
+          email: value,
+        },
+      });
+    } else if (identifier === 'id') {
+      return this.userModel.findOne({
+        where: {
+          id: value,
+        },
+      });
+    }
   }
 
   async hashPassword(password: string): Promise<string> {
