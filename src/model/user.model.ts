@@ -6,7 +6,7 @@ export class UserRegistrationRequest {
 
 export class UserResponse {
   name?: string;
-  token?: string;
+  access_token?: string;
 }
 
 export class UserLoginRequest {

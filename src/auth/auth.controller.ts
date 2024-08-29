@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
   Post,
   Request,
   UseGuards,
@@ -9,19 +10,16 @@ import {
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { WebResponse } from '../model/web.model';
-import { UserRegistrationRequest } from '../model/user.model';
+import {
+  UserLoginRequest,
+  UserRegistrationRequest,
+  UserResponse,
+} from '../model/user.model';
 
 @Controller('/api/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  // @HttpCode(HttpStatus.OK)
-  // @Post('login')
-  // signIn(@Body() signInDto: Record<string, any>) {
-  //   // Change record into login request type (can be model)
-  //   return this.authService.signIn(signInDto.username, signInDto.password);
-  // }
-  // TODO: Create route register
   @Post('/register')
   async register(
     @Body() request: UserRegistrationRequest,
@@ -33,7 +31,21 @@ export class AuthController {
       };
     }
   }
-  // TODO: Create route sign In
+
+  @HttpCode(200)
+  @Post('/login')
+  async login(
+    @Body() request: UserLoginRequest,
+  ): Promise<WebResponse<UserResponse>> {
+    const result = await this.authService.signIn(request);
+    if (result) {
+      return {
+        message: 'Successfully login',
+        data: result,
+      };
+    }
+  }
+
   @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@Request() req) {

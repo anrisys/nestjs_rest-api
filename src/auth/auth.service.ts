@@ -19,30 +19,6 @@ export class AuthService {
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
   ) {}
 
-  async signIn(
-    request: UserLoginRequest,
-  ): Promise<{ name: string; access_token: string }> {
-    const user = await this.userService.findUser('email', request.email);
-
-    if (!user) {
-      throw new HttpException('Email or password is wrong', 400);
-    }
-
-    const isPasswordCorrect = await this.userService.comparePassword(
-      request.password,
-      user.password,
-    );
-
-    if (!isPasswordCorrect) {
-      throw new HttpException('Email of password is wrong', 400);
-    }
-
-    return {
-      name: user.name,
-      access_token: await this.createToken(user.id),
-    };
-  }
-
   async register(request: UserRegistrationRequest): Promise<boolean> {
     this.logger.info(`Register new user ${JSON.stringify(request)}`);
     const registerRequest: UserRegistrationRequest =
@@ -64,6 +40,34 @@ export class AuthService {
     await this.userService.saveUser(registerRequest);
 
     return true;
+  }
+
+  async signIn(
+    request: UserLoginRequest,
+  ): Promise<{ name: string; access_token: string }> {
+    this.logger.info(`User login ${JSON.stringify(request)}`);
+
+    this.validationService.validate(UserValidation.LOGIN, request);
+
+    const user = await this.userService.findUser('email', request.email);
+
+    if (!user) {
+      throw new HttpException('Email or password is wrong', 400);
+    }
+
+    const isPasswordCorrect = await this.userService.comparePassword(
+      request.password,
+      user.password,
+    );
+
+    if (!isPasswordCorrect) {
+      throw new HttpException('Email of password is wrong', 400);
+    }
+
+    return {
+      name: user.name,
+      access_token: await this.createToken(user.id),
+    };
   }
 
   async createToken(id: string): Promise<string> {

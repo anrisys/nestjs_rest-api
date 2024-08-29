@@ -73,5 +73,35 @@ describe('AuthController', () => {
       expect(response.status).toBe(400);
       expect(response.body.errors).toBe('Email is already existed');
     });
+
+    it('should reject login request as data invalid', async () => {
+      await testService.createUser();
+
+      const response = await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({
+          email: 'newuser',
+          password: 'newuser123',
+        });
+
+      expect(response.status).toBe(400);
+      expect(response.body.errors).toBeDefined();
+    });
+
+    it('should be able to login', async () => {
+      await testService.createUser();
+
+      const response = await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({
+          email: 'newuser@example.com',
+          password: 'newuser123',
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.message).toBe('Successfully login');
+      expect(response.body.data.name).toBe('newuser');
+      expect(response.body.data.access_token).toBeDefined();
+    });
   });
 });
