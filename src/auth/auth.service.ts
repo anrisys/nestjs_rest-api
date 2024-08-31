@@ -41,12 +41,9 @@ export class AuthService {
 
     return true;
   }
-
-  async signIn(
-    request: UserLoginRequest,
-  ): Promise<{ name: string; access_token: string }> {
+  // BUG: secretOrPrivateKey must have a value
+  async signIn(request: UserLoginRequest): Promise<{ access_token: string }> {
     this.logger.info(`User login ${JSON.stringify(request)}`);
-
     this.validationService.validate(UserValidation.LOGIN, request);
 
     const user = await this.userService.findUser('email', request.email);
@@ -64,13 +61,18 @@ export class AuthService {
       throw new HttpException('Email of password is wrong', 400);
     }
 
-    return {
-      name: user.name,
-      access_token: await this.createToken(user.id),
-    };
-  }
+    // return {
+    //   name: user.name,
+    //   access_token: await this.createToken(user.id),
+    // };
+    // const { password, ...result } = user;
 
-  async createToken(id: string): Promise<string> {
-    return await this.jwtService.signAsync({ id: id });
+    const payload = { sub: user.id, email: user.email };
+
+    return { access_token: await this.generateToken(payload) };
+  }
+  // TODO: Check here whether it really is any type return
+  async generateToken(payload: { sub: string; email: string }): Promise<any> {
+    return await this.jwtService.signAsync(payload);
   }
 }

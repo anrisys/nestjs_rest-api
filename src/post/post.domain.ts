@@ -10,7 +10,7 @@ import {
 import { User } from '../user/user.domain';
 
 @Table
-export class Post extends Model {
+export class Posts extends Model {
   @Column
   content: string;
 

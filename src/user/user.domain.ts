@@ -1,5 +1,5 @@
 import { Column, HasMany, Model, Table } from 'sequelize-typescript';
-import { Post } from '../post/post.domain';
+import { Posts } from '../post/post.domain';
 
 @Table
 export class User extends Model {
@@ -12,6 +12,6 @@ export class User extends Model {
   @Column
   password: string;
 
-  @HasMany(() => Post)
-  post: Post[];
+  @HasMany(() => Posts)
+  post: Posts[];
 }

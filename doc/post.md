@@ -64,13 +64,6 @@ Response Body (Success):
       "authorId": 1,
       "createdAt": "2024-08-20T10:00:00Z",
       "updatedAt": "2024-08-20T11:00:00Z"
-    },
-    {
-      "id": 2,
-      "content": "This is another post",
-      "authorId": 2,
-      "createdAt": "2024-08-20T12:00:00Z",
-      "updatedAt": "2024-08-20T13:00:00Z"
     }
   ]
 }

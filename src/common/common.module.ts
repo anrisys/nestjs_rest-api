@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { SequelizeModule } from '@nestjs/sequelize';
 import { WinstonModule } from 'nest-winston';
 import { Dialect } from 'sequelize';
-import { Post } from '../post/post.domain';
+import { Posts } from '../post/post.domain';
 import { User } from '../user/user.domain';
 import * as winston from 'winston';
 import { ValidationService } from './validation.service';
@@ -27,7 +27,7 @@ import { ErrorFilter } from './error.filter';
       username: process.env.DB_USER,
       password: process.env.DB_PASS,
       database: process.env.DB_NAME_DEVELOPMENT,
-      models: [User, Post],
+      models: [User, Posts],
       autoLoadModels: true,
       synchronize: true,
     }),
