@@ -99,10 +99,14 @@ Response Body (Success):
 
 ```json
 {
+  "message": "Post successfully created",
   "data": [
     {
-      "message": "Post successfully created",
-      "postId": 1
+      "id": 1,
+      "content": "This is the first post",
+      "authorId": 1,
+      "createdAt": "2024-08-20T10:00:00Z",
+      "updatedAt": "2024-08-20T11:00:00Z"
     }
   ]
 }
@@ -139,10 +143,14 @@ Response Body (Success):
 
 ```json
 {
+  "message": "Post successfully created",
   "data": [
     {
-      "message": "Post successfully created",
-      "postId": 1
+      "id": 1,
+      "content": "This is the first post",
+      "authorId": 1,
+      "createdAt": "2024-08-20T10:00:00Z",
+      "updatedAt": "2024-08-20T11:00:00Z"
     }
   ]
 }

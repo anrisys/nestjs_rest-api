@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Inject,
   NotFoundException,
   Param,
   ParseIntPipe,
@@ -13,14 +14,20 @@ import { PostService } from './post.service';
 import { WebResponse } from '../model/web.model';
 import { Posts } from './post.domain';
 import { ZodValidationPipe } from '../common/validation.pipe';
-import { PostValidation } from './post.validation';
+import { CreatePostDto, PostValidation } from './post.schema';
 import { AuthGuard } from '../auth/auth.guard';
 import { User } from '../common/user.decorator';
+import { Logger } from 'winston';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 
 @Controller('/api/posts')
 export class PostController {
-  constructor(private postService: PostService) {}
+  constructor(
+    private postService: PostService,
+    @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
+  ) {}
 
+  // TODO: Add author name alongside the return data of get posts
   @Get()
   async retrieveAllPosts(): Promise<WebResponse<Posts[]>> {
     const result = await this.postService.findAll();
@@ -30,6 +37,7 @@ export class PostController {
     };
   }
 
+  // TODO: Add author name alongside the return data of get posts
   @Get(':postId')
   async retrieveSinglePost(
     @Param('postId', ParseIntPipe) postId: string,
@@ -47,12 +55,15 @@ export class PostController {
   @UseGuards(AuthGuard)
   @UsePipes(new ZodValidationPipe(PostValidation.CREATE))
   async create(
-    @Body() content: string,
+    @Body() createPostDto: CreatePostDto,
     @User() user: string,
   ): Promise<WebResponse<Posts>> {
-    const post = await this.postService.create({ content, authorId: user });
+    const post = await this.postService.create({
+      content: createPostDto.content,
+      authorId: user,
+    });
     return {
-      message: 'Successfully create new Post',
+      message: 'Successfully created new Post',
       data: post,
     };
   }

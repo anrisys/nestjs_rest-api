@@ -102,9 +102,9 @@ describe('AuthController', () => {
         });
 
       expect(response.status).toBe(200);
-      // expect(response.body.message).toBe('Successfully login');
-      // expect(response.body.data.name).toBe('newuser');
-      expect(response.body.access_token).toBeDefined();
+      expect(response.body.message).toBe('Successfully login');
+      expect(response.body.data.name).toBe('newuser');
+      expect(response.body.data.access_token).toBeDefined();
     });
   });
 });

@@ -53,6 +53,7 @@ Response Body (Success):
 
 ```json
 {
+  "message" : "Successfully login"
   "data": {
     "name": "user",
     "token": "generated_token"

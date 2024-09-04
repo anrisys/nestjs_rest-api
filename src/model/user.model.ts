@@ -4,7 +4,7 @@ export class UserRegistrationRequest {
   password: string;
 }
 
-export class UserResponse {
+export class UserLoginResponse {
   name?: string;
   access_token?: string;
 }

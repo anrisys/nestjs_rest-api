@@ -60,6 +60,8 @@ describe('PostController', () => {
     let jwtToken: string;
 
     beforeEach(async () => {
+      await testService.deletePosts();
+
       await testService.deleteUser();
 
       await testService.createUser();
@@ -72,12 +74,24 @@ describe('PostController', () => {
         });
 
       logger.info(loginResponse.body);
-      jwtToken = loginResponse.body.data;
+      jwtToken = loginResponse.body.data.access_token;
+    });
+
+    it('should return 401 when JWT is missing', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/posts')
+        .send({
+          content: '',
+          authorId: '',
+        });
+
+      expect(response.status).toBe(401);
+      expect(response.body).toBeDefined();
     });
 
     it('should create a post successfully with valid JWT', async () => {
       const postData = {
-        content: 'new post',
+        content: 'testing post',
       };
 
       const response = await request(app.getHttpServer())
@@ -85,21 +99,11 @@ describe('PostController', () => {
         .set('Authorization', `Bearer ${jwtToken}`)
         .send(postData);
 
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('id');
-      expect(response.body.content).toBe(postData.content);
+      expect(response.status).toBe(201);
+      expect(response.body.data).toHaveProperty('id');
+      expect(response.body.data.content).toBe(postData.content);
     });
 
-    // it('should return 401 when JWT is missing', async () => {
-    //   const response = await request(app.getHttpServer())
-    //     .post('/api/posts')
-    //     .send({
-    //       content: '',
-    //       authorId: '',
-    //     });
-
-    //   expect(response.status).toBe(401);
-    //   expect(response.body).toBeDefined();
-    // });
+    // TODO: Return bad request as content is not provided
   });
 });
