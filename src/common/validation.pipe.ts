@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { ZodError, ZodSchema } from 'zod';
 
-// TODO: Modify the error throwing to make it more readble
 @Injectable()
 export class ZodValidationPipe implements PipeTransform {
   constructor(private schema: ZodSchema) {}

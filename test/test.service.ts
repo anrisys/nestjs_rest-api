@@ -12,7 +12,7 @@ export class TestService {
   ) {}
 
   async deleteUser() {
-    await this.userModel.destroy({ where: { email: 'newuser@example.com' } });
+    await this.userModel.destroy({ truncate: true });
   }
 
   async deletePosts() {

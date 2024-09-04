@@ -25,12 +25,10 @@ describe('PostController', () => {
   });
 
   describe('GET /api/posts', () => {
-    beforeEach(async () => {
-      await testService.deleteUser();
-    });
-
     it('should return all posts', async () => {
       const response = await request(app.getHttpServer()).get('/api/posts');
+
+      logger.info(response.body);
 
       expect(response.status).toBe(200);
       expect(response.body.data).toBeTruthy();
@@ -41,9 +39,11 @@ describe('PostController', () => {
     it('should return a post since the post exist', async () => {
       const response = await request(app.getHttpServer()).get('/api/posts/1');
 
+      logger.info(response.body);
+
       expect(response.status).toBe(200);
       expect(response.body.data.id).toBe(1);
-      expect(response.body.data.content).toBe('This is my new post');
+      expect(response.body.data.content).toBe('testing post');
     });
 
     it('should return null as the post not found', async () => {

@@ -27,7 +27,6 @@ export class PostController {
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
   ) {}
 
-  // TODO: Add author name alongside the return data of get posts
   @Get()
   async retrieveAllPosts(): Promise<WebResponse<Posts[]>> {
     const result = await this.postService.findAll();
@@ -37,7 +36,6 @@ export class PostController {
     };
   }
 
-  // TODO: Add author name alongside the return data of get posts
   @Get(':postId')
   async retrieveSinglePost(
     @Param('postId', ParseIntPipe) postId: string,
