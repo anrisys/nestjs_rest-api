@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Inject,
   NotFoundException,
@@ -91,5 +92,18 @@ export class PostController {
     };
   }
 
-  // TODO: Route delete a post
+  @Delete(':postId')
+  @UseGuards(AuthGuard)
+  async deletePost(
+    @Param('postId') postId: string,
+    @User() userId: string,
+  ): Promise<WebResponse<boolean>> {
+    const result = await this.postService.destroy(postId, userId);
+
+    if (result) {
+      return {
+        message: 'Successfully delete a post',
+      };
+    }
+  }
 }

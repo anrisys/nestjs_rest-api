@@ -1,6 +1,7 @@
 import {
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { Posts } from './post.domain';
@@ -63,5 +64,23 @@ export class PostService {
     return await this.findOne(postId);
   }
 
-  // TODO: Delete Post
+  async destroy(postId: string, userId: string): Promise<boolean> {
+    const post = await this.findOne(postId);
+
+    if (!post) {
+      throw new NotFoundException('Post not Found');
+    }
+
+    if (post.authorId !== Number(userId)) {
+      throw new ForbiddenException('You are not allowed to do this action');
+    }
+
+    const result = await this.postModel.destroy({ where: { id: postId } });
+
+    if (result === 0) {
+      throw new InternalServerErrorException('Please try again later');
+    }
+
+    return true;
+  }
 }
