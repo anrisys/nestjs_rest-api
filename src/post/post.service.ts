@@ -1,7 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { Posts } from './post.domain';
 import { InjectModel } from '@nestjs/sequelize';
-import { PostCreateRequest } from '../model/post.model';
+import { PostCreateRequest, PostUpdateRequest } from '../model/post.model';
 import { User } from '../user/user.domain';
 
 @Injectable()
@@ -17,7 +21,7 @@ export class PostService {
 
   async findOne(id: string): Promise<Posts> {
     const post = await this.postModel.findOne({
-      where: { id: id },
+      where: { id: Number(id) },
       include: { model: User, attributes: ['id', 'name'] },
     });
     return post;
@@ -32,7 +36,32 @@ export class PostService {
     return newPost;
   }
 
-  // TODO: Update Post
+  async update(
+    request: PostUpdateRequest,
+    postId: string,
+    userId: string,
+  ): Promise<Posts> {
+    const post: Posts = await this.findOne(postId);
+
+    console.log(post);
+
+    if (!post) {
+      throw new NotFoundException('Post not found');
+    }
+
+    if (post.authorId !== Number(userId)) {
+      throw new ForbiddenException('You are not allowed do this action');
+    }
+
+    await this.postModel.update(
+      { ...request },
+      {
+        where: { id: post.id },
+      },
+    );
+
+    return await this.findOne(postId);
+  }
 
   // TODO: Delete Post
 }

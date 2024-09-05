@@ -4,9 +4,9 @@ import {
   ExceptionFilter,
   HttpException,
 } from '@nestjs/common';
-import { ZodError } from 'zod';
 
-@Catch(ZodError, HttpException)
+// TODO: Handling error from database error
+@Catch(HttpException)
 export class ErrorFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
     const response = host.switchToHttp().getResponse();

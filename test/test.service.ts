@@ -26,4 +26,18 @@ export class TestService {
       password: await bcrypt.hash('newuser123', 10),
     });
   }
+
+  async createCustomUser(name: string, email: string, password: string) {
+    const hashedPassword: string = await bcrypt.hash(password, 10);
+
+    await this.userModel.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
+  }
+
+  async findPost(id: string) {
+    return await this.postModel.findByPk(id);
+  }
 }

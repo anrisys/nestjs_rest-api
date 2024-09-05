@@ -52,7 +52,7 @@ describe('PostController', () => {
       logger.info(response.body);
 
       expect(response.status).toBe(404);
-      expect(response.body.errors.message).toBe('Post not found');
+      expect(response.body.message).toBe('Post not found');
     });
   });
 
@@ -61,10 +61,6 @@ describe('PostController', () => {
 
     beforeEach(async () => {
       await testService.deletePosts();
-
-      await testService.deleteUser();
-
-      await testService.createUser();
 
       const loginResponse = await request(app.getHttpServer())
         .post('/api/auth/login')
@@ -104,6 +100,89 @@ describe('PostController', () => {
       expect(response.body.data.content).toBe(postData.content);
     });
 
-    // TODO: Return bad request as content is not provided
+    it('should reject the request as the data is not valid', async () => {
+      const postData = { content: '' };
+
+      const response = await request(app.getHttpServer())
+        .post('/api/posts')
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .send(postData);
+
+      logger.info(response.body);
+      expect(response.status).toBe(400);
+      expect(response.body).toBeDefined();
+    });
+  });
+
+  describe('PUT /api/posts/:id', () => {
+    let jwtToken: string;
+    let postId: string;
+    let newPost: any;
+    beforeEach(async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({
+          email: 'newuser@example.com',
+          password: 'newuser123',
+        });
+
+      jwtToken = response.body.data.access_token;
+
+      newPost = await request(app.getHttpServer())
+        .post('/api/posts')
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .send({ content: 'New Post' });
+
+      postId = newPost.body.data.id;
+    });
+
+    it('should successfully update a post', async () => {
+      const requestData = {
+        content: 'New update post',
+      };
+
+      const response = await request(app.getHttpServer())
+        .put(`/api/posts/${postId}`)
+        .set('Authorization', `Bearer ${jwtToken}`)
+        .send({ ...requestData });
+
+      logger.info(response.body);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.id).toBe(postId);
+      expect(response.body.data.content).toBe(requestData.content);
+    });
+
+    // TODO: Unit test for not owning the post
+    it('should reject the update post request as the user does not own the post', async () => {
+      await testService.createCustomUser(
+        'seconduser',
+        'seconduser@example.com',
+        'seconduser890',
+      );
+
+      const loginResult = await request(app.getHttpServer())
+        .post('/api/auth/login')
+        .send({
+          email: 'seconduser@example.com',
+          password: 'seconduser890',
+        });
+
+      const tempBearerTOken = loginResult.body.data.access_token;
+
+      const response = await request(app.getHttpServer())
+        .put(`/api/post/${postId}`)
+        .set('Authorization', `Bearer ${tempBearerTOken}`)
+        .send({ content: 'Just changed' });
+
+      const post = await testService.findPost(postId);
+
+      logger.info(post);
+      logger.info(response);
+
+      expect(response.status).toBe(403);
+      expect(post.content).toEqual(newPost.content);
+    });
+    // TODO: Unit test for invalid data
   });
 });

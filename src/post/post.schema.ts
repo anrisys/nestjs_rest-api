@@ -1,7 +1,7 @@
 import { z, ZodType } from 'zod';
 
-export class PostValidation {
-  static readonly CREATE: ZodType = z
+export class PostSchema {
+  static readonly PostInputData: ZodType = z
     .object({
       content: z
         .string({
@@ -14,4 +14,4 @@ export class PostValidation {
     .required();
 }
 
-export type CreatePostDto = z.infer<typeof PostValidation.CREATE>;
+export type PostInputData = z.infer<typeof PostSchema.PostInputData>;

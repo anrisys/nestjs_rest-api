@@ -20,6 +20,8 @@ export class ZodValidationPipe implements PipeTransform {
           throw new BadRequestException();
         }
         return value;
+      } else if (metadata.type === 'param') {
+        return value;
       }
     } catch (error) {
       if (error instanceof ZodError) {
